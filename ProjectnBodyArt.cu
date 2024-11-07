@@ -385,10 +385,12 @@ void setInitailConditions()
 		while(test == 0)
 		{
 			float temp = angle + i*dangle;
+			// 2D Box Shape
 			// Get random number between -1 at 1.
 			// BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
 			// BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
 			// BodyPositionZ[i] = 0.0;  //((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			// Heart Shape
 			BodyPositionX[i] = 16*pow(sin(temp),3)/7.0;
 			BodyPositionY[i] = (13*cos(temp) - 5*cos(2*temp) - 2*cos(3*temp) - cos(4*temp))/7.0;
 			BodyPositionZ[i] = 0.0;
