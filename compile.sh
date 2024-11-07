@@ -1,1 +1,1 @@
-nvcc nBodyArtB.cu -o nBodyArt -lglut -lm -lGLU -lGL
+nvcc ProjectnBodyArt.cu -o nBodyArt -lglut -lm -lGLU -lGL
