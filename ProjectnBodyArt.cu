@@ -13,6 +13,8 @@
 #include <cuda.h>
 using namespace std;
 
+#define PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286
+
 FILE* ffmpeg;
 
 // defines for terminal stuff.
@@ -322,7 +324,7 @@ void screenShot()
 
 void setSimulationParameters()
 {
-	NumberOfBodies = 75;
+	NumberOfBodies = 16;
 
 	TotalRunTime = 10000.0;
 
@@ -330,7 +332,7 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 1.03;
+	G = 0.53;
 
 	H = 1.5;
 
@@ -373,6 +375,8 @@ void setInitailConditions()
     float dx, dy, dz, d, d2;
     int test;
 	time_t t;
+	float angle = 0.0;
+	float dangle = 2.0*PI/NumberOfBodies;
 	
 	srand((unsigned) time(&t));
 	for(int i = 0; i < NumberOfBodies; i++)
@@ -380,11 +384,14 @@ void setInitailConditions()
 		test = 0;
 		while(test == 0)
 		{
-			// float temp = 
+			float temp = angle + i*dangle;
 			// Get random number between -1 at 1.
-			BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			BodyPositionZ[i] = 0.0;  //((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			// BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			// BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			// BodyPositionZ[i] = 0.0;  //((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			BodyPositionX[i] = 16*pow(sin(temp),3)/7.0;
+			BodyPositionY[i] = (13*cos(temp) - 5*cos(2*temp) - 2*cos(3*temp) - cos(4*temp))/7.0;
+			BodyPositionZ[i] = 0.0;
 			test = 1;
 			
 			for(int j = 0; j < i; j++)
@@ -427,7 +434,7 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    		centerOfMass.x += BodyPositionX[i]*MassOfBody;
+    	centerOfMass.x += BodyPositionX[i]*MassOfBody;
 		centerOfMass.y += BodyPositionY[i]*MassOfBody;
 		centerOfMass.z += BodyPositionZ[i]*MassOfBody;
 		totalMass += MassOfBody;
@@ -451,7 +458,7 @@ float4 linearVelocity()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    		linearVelocity.x += BodyVelocityX[i]*MassOfBody;
+    	linearVelocity.x += BodyVelocityX[i]*MassOfBody;
 		linearVelocity.y += BodyVelocityY[i]*MassOfBody;
 		linearVelocity.z += BodyVelocityZ[i]*MassOfBody;
 		totalMass += MassOfBody;
