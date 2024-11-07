@@ -1,4 +1,4 @@
 Ideas:
- - Make bodies interact with the mouse, whether attracted to or repelled from
+ - Make bodies interact with the mouse, whether attracted to or repelled from. Alternate between attraction/repulsion with mouse clicks?
  - Different initialization shapes: Heart, Box, Sphere; 3D or 2D
  - Random colors as it runs
