@@ -159,6 +159,12 @@ void KeyPressed(unsigned char key, int x, int y)
 		screenShot();
 		terminalPrint();
 	}
+
+	if(key == 'C') // Center out system
+	{
+		zeroOutSystem();
+		drawPicture();
+	}
 }
 
 void mousePassiveMotionCallback(int x, int y) 
@@ -316,7 +322,7 @@ void screenShot()
 
 void setSimulationParameters()
 {
-	NumberOfBodies = 16;
+	NumberOfBodies = 75;
 
 	TotalRunTime = 10000.0;
 
@@ -324,9 +330,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.03;
+	G = 1.03;
 
-	H = 0.0;
+	H = 1.5;
 
 	Epsilon = 0.01;
 
@@ -374,6 +380,7 @@ void setInitailConditions()
 		test = 0;
 		while(test == 0)
 		{
+			// float temp = 
 			// Get random number between -1 at 1.
 			BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
 			BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
@@ -484,6 +491,9 @@ void drawPicture()
 		
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
+		BodyColorX[i] = (float)rand()/(float)RAND_MAX;
+		BodyColorY[i] = (float)rand()/(float)RAND_MAX;
+		BodyColorZ[i] = (float)rand()/(float)RAND_MAX;
 		glColor3d(BodyColorX[i], BodyColorY[i], BodyColorZ[i]);
 		glPushMatrix();
 			glTranslatef(BodyPositionX[i], BodyPositionY[i], BodyPositionZ[i]);
@@ -633,6 +643,9 @@ void terminalPrint()
 	
 	printf("\n");
 	printf("\n S: Screenshot");
+
+	printf("\n");
+	printf("\n C: Center out system");
 	
 	printf("\n");
 	printf("\n q: Terminates the simulation");
