@@ -201,16 +201,21 @@ void mymouse(int button, int state, int x, int y)
 	// but you move the mouse wheel this is called.
 	if(state == 0)
 	{
-		// When you turn the mouse whell forward this is called.
+		float dz = 0.05f;
+		// When you turn the mouse wheel forward this is called.
 		if(button == 3)
 		{
-		
+			glTranslatef(0.0, 0.0, dz);
+			drawPicture();
+			terminalPrint();
 		}
 		
-		// When you turn the mouse whell backward this is called.
+		// When you turn the mouse wheel backward this is called.
 		else if(button == 4)
 		{
-		
+			glTranslatef(0.0, 0.0, -dz);
+			drawPicture();
+			terminalPrint();
 		}
 	}
 }
@@ -614,7 +619,11 @@ void terminalPrint()
 	
 	printf("\n\n");
 	printf("\033[0m");
-	printf(" p: Pause on/off toggle --> ");
+	printf("\n");
+	printf(" o/f: Orthographic/Frustum Projection");
+	printf("\n");
+	printf("\n Mouse Wheel: Zoom in/out");
+	printf("\n p: Pause on/off toggle --> ");
 	printf(" The simulation is:");
 	if (Pause == 1) 
 	{
