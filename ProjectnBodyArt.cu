@@ -622,7 +622,7 @@ void terminalPrint()
 	printf("\n");
 	printf(" o/f: Orthographic/Frustum Projection");
 	printf("\n");
-	printf("\n Mouse Wheel: Zoom in/out");
+	printf("\n Mouse Wheel: Zoom in/out\n");
 	printf("\n p: Pause on/off toggle --> ");
 	printf(" The simulation is:");
 	if (Pause == 1) 
