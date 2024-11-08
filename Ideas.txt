@@ -3,4 +3,4 @@ Ideas:
  - Different initialization shapes: Heart, Box, Sphere; 3D or 2D
  - Random colors as it runs
  - Changing forces over time
- - 
+ - Different sized bodies
