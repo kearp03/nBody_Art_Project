@@ -1,5 +1,5 @@
-# nBody_Art_Project
-Source code for the nBody art project for Mathematical Modeling.
+# nBody Art Project
+Source code for the nBody art project for Mathematical Modeling. We were tasked with creating art using particle modeling. This repository contains the files to create our art. Colaboration between Kyle Earp, Kyla Moore, Aron Mack, and Veronica Herrera.
 
 ## Compiling and Running Code
 The repository contains bash scripts to compile, or to compile and run the CUDA file. First you need to ensure the scripts have the right executable permissions:
