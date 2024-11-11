@@ -4,3 +4,6 @@ Ideas:
  - Random colors as it runs
  - Changing forces over time
  - Different sized bodies
+ - Fractal Patterns
+ - Angular movement
+ - Addition of bodies
