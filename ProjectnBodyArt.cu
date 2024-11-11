@@ -29,6 +29,7 @@ float TotalRunTime;
 float Dt;
 float G;
 float H;
+float dForce;
 float Epsilon;
 float MassOfBody;
 float DiameterOfBody;
@@ -329,7 +330,7 @@ void screenShot()
 
 void setSimulationParameters()
 {
-	NumberOfBodies = 16;
+	NumberOfBodies = 50;
 
 	TotalRunTime = 10000.0;
 
@@ -337,9 +338,11 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.53;
+	G = 2.53;
 
 	H = 1.5;
+
+	dForce = 0.9;
 
 	Epsilon = 0.01;
 
@@ -380,8 +383,6 @@ void setInitailConditions()
     float dx, dy, dz, d, d2;
     int test;
 	time_t t;
-	float angle = 0.0;
-	float dangle = 2.0*PI/NumberOfBodies;
 	
 	srand((unsigned) time(&t));
 	for(int i = 0; i < NumberOfBodies; i++)
@@ -389,16 +390,16 @@ void setInitailConditions()
 		test = 0;
 		while(test == 0)
 		{
-			float temp = angle + i*dangle;
 			// 2D Box Shape
 			// Get random number between -1 at 1.
-			// BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			// BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			// BodyPositionZ[i] = 0.0;  //((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			BodyPositionZ[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0; //0.0;
 			// Heart Shape
-			BodyPositionX[i] = 16*pow(sin(temp),3)/7.0;
-			BodyPositionY[i] = (13*cos(temp) - 5*cos(2*temp) - 2*cos(3*temp) - cos(4*temp))/7.0;
-			BodyPositionZ[i] = 0.0;
+			// float temp = 2*PI*((float)rand()/(float)RAND_MAX);
+			// BodyPositionX[i] = 16*pow(sin(temp),3)/7.0;
+			// BodyPositionY[i] = (13*cos(temp) - 5*cos(2*temp) - 2*cos(3*temp) - cos(4*temp))/7.0;
+			// BodyPositionZ[i] = 0.0;
 			test = 1;
 			
 			for(int j = 0; j < i; j++)
@@ -505,9 +506,9 @@ void drawPicture()
 		
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-		BodyColorX[i] = (float)rand()/(float)RAND_MAX;
-		BodyColorY[i] = (float)rand()/(float)RAND_MAX;
-		BodyColorZ[i] = (float)rand()/(float)RAND_MAX;
+		// BodyColorX[i] = (float)rand()/(float)RAND_MAX;
+		// BodyColorY[i] = (float)rand()/(float)RAND_MAX;
+		// BodyColorZ[i] = (float)rand()/(float)RAND_MAX;
 		glColor3d(BodyColorX[i], BodyColorY[i], BodyColorZ[i]);
 		glPushMatrix();
 			glTranslatef(BodyPositionX[i], BodyPositionY[i], BodyPositionZ[i]);
@@ -566,6 +567,8 @@ void getForces(float *posX, float *posY,float *posZ, float *velX, float *velY, f
 		posY[i] += velY[i]*dt;
 		posZ[i] += velZ[i]*dt;
 	}
+	G *= (1 - dForce);
+	H *= (1 - dForce);
 }
 
 void nBody()
