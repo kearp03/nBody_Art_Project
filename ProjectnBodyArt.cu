@@ -23,6 +23,7 @@ FILE* ffmpeg;
 
 typedef struct {
 	int id;
+	float mass;
 	float4 pos;
 	float4 vel;
 	float4 force;
@@ -50,6 +51,7 @@ int Capacity = 100;
 
 // Other Globals
 int Pause;
+int LClickOn = 0;
 int DrawTimer, PrintTimer;
 float RunTime;
 int* Buffer;
@@ -117,6 +119,7 @@ void addBody(Body newBody)
     // Increment the number of bodies
     NumberOfBodies++;
 
+	drawPicture();
     //for debugging
     //printf("Body %d added at (%f, %f, %f) with velocity (%f, %f, %f)\n", newBody.id, newBody.pos.x, newBody.pos.y, newBody.pos.z, newBody.vel.x, newBody.vel.y, newBody.vel.z);
 }
@@ -214,6 +217,13 @@ void KeyPressed(unsigned char key, int x, int y)
 		zeroOutSystem();
 		drawPicture();
 	}
+
+	if(key == 'N') // Turn on or off adding bodies
+	{
+		if(LClickOn == 1) LClickOn = 0;
+		else LClickOn = 1;
+		terminalPrint();
+	}
 }
 
 void mousePassiveMotionCallback(int x, int y) 
@@ -233,18 +243,14 @@ void mymouse(int button, int state, int x, int y)
 		if(button == GLUT_LEFT_BUTTON)
 		{	
 			// Do stuff in here if you choose to when the left mouse button is pressed.
-			if(1)
+			if(LClickOn == 1)
 			{
-				float VelocityMax = 1.0;
+				// float VelocityMax = 1.0;
 				//generate random numbers for all the properties of the new body
                 int index = NumberOfBodies; // Define and initialize index
-                float x = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                float y = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                float z = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                float vx = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                float vy = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                float vz = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
-                // float mass = MassOfBody;
+				float xpos = (float)x/(float)XWindowSize*2.0 - 1.0;
+				float ypos = -(float)y/(float)YWindowSize*2.0 + 1.0;
+                float mass = MassOfBody;
 
                 float colorx = ((float)rand()/(float)RAND_MAX);
                 float colory = ((float)rand()/(float)RAND_MAX);
@@ -254,9 +260,10 @@ void mymouse(int button, int state, int x, int y)
 
                 //assign all the properties of the new body
                 newBody.id = index;
+				newBody.mass = mass;
                 newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
-                newBody.pos = {x, y, z, 1.0f}; // Directly assign values to float4
-                newBody.vel = {vx, vy, vz, 0.0f}; // Directly assign values to float4
+                newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
+                newBody.vel = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
                 newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
 
                 addBody(newBody);
@@ -404,7 +411,7 @@ void screenShot()
 
 void setSimulationParameters()
 {
-	NumberOfBodies = 16;
+	NumberOfBodies = 0;
 
 	TotalRunTime = 10000.0;
 
@@ -728,6 +735,19 @@ void terminalPrint()
 	{
 		printf("\033[0;32m");
 		printf(BOLD_ON "Video Recording On" BOLD_OFF);
+	}
+
+	printf("\n");
+	printf("\n N: Add Bodies On/Off toggle --> ");
+	if (LClickOn == 0) 
+	{
+		printf("\033[0;31m");
+		printf(BOLD_ON "Adding Bodies Off" BOLD_OFF); 
+	}
+	else 
+	{
+		printf("\033[0;32m");
+		printf(BOLD_ON "Adding Bodies On" BOLD_OFF);
 	}
 	
 	printf("\n");
