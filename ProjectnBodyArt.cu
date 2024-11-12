@@ -21,6 +21,14 @@ FILE* ffmpeg;
 #define BOLD_ON  "\e[1m"
 #define BOLD_OFF   "\e[m"
 
+typedef struct {
+	int id;
+	float4 pos;
+	float4 vel;
+	float4 force;
+	float4 color;
+} Body;
+
 FILE* MovieFile;
 
 // Globals
@@ -37,13 +45,11 @@ float VelocityMax;
 float Drag;
 int DrawRate;
 int PrintRate;
+// int NumberOfBodies;
+int Capacity = 100;
 
 // Other Globals
 int Pause;
-float *BodyPositionX, *BodyPositionY, *BodyPositionZ;
-float *BodyVelocityX, *BodyVelocityY, *BodyVelocityZ;
-float *BodyForceX, *BodyForceY, *BodyForceZ;
-float *BodyColorX, *BodyColorY, *BodyColorZ;
 int DrawTimer, PrintTimer;
 float RunTime;
 int* Buffer;
@@ -69,6 +75,7 @@ double UpY;
 double UpZ;
 
 // Prototyping functions
+void addBody(Body);
 void setSimulationParameters();
 void allocateMemory();
 void setInitailConditions();
@@ -85,6 +92,39 @@ float4 linearVelocity();
 void zeroOutSystem();
 
 //#include "./callBackFunctions.h"
+
+Body* Bodies = NULL;
+
+void addBody(Body newBody) 
+{
+    // Reallocate memory to accommodate the new body
+    if (NumberOfBodies >= Capacity) //if the new body will exceed the current capacity
+    {
+        Capacity *= 2; //double the capacity
+        Body* temp = (Body*)realloc(Bodies, Capacity*sizeof(Body)); //reallocate memory to accommodate the new body
+        if (temp == NULL)  //if memory allocation fails
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
+        Bodies = temp;//assign the new memory to the bodies array, so long as memory allocation was successful
+        //printf("Reallocated memory to capacity: %d\n", capacity);
+    }
+
+    /// Add the new body to the array
+    Bodies[NumberOfBodies] = newBody;
+
+    // Increment the number of bodies
+    NumberOfBodies++;
+
+    //for debugging
+    //printf("Body %d added at (%f, %f, %f) with velocity (%f, %f, %f)\n", newBody.id, newBody.pos.x, newBody.pos.y, newBody.pos.z, newBody.vel.x, newBody.vel.y, newBody.vel.z);
+}
+
+void freeBodies() 
+{
+    free(Bodies);
+}
 
 void Display()
 {
@@ -193,6 +233,34 @@ void mymouse(int button, int state, int x, int y)
 		if(button == GLUT_LEFT_BUTTON)
 		{	
 			// Do stuff in here if you choose to when the left mouse button is pressed.
+			if(1)
+			{
+				float VelocityMax = 1.0;
+				//generate random numbers for all the properties of the new body
+                int index = NumberOfBodies; // Define and initialize index
+                float x = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                float y = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                float z = ((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                float vx = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                float vy = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                float vz = VelocityMax*((float)rand()/(float)RAND_MAX)*2.0f - 1.0f;
+                // float mass = MassOfBody;
+
+                float colorx = ((float)rand()/(float)RAND_MAX);
+                float colory = ((float)rand()/(float)RAND_MAX);
+                float colorz = ((float)rand()/(float)RAND_MAX);
+
+                Body newBody; //create a new body with the body struct
+
+                //assign all the properties of the new body
+                newBody.id = index;
+                newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
+                newBody.pos = {x, y, z, 1.0f}; // Directly assign values to float4
+                newBody.vel = {vx, vy, vz, 0.0f}; // Directly assign values to float4
+                newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+
+                addBody(newBody);
+			}
 		}
 		else if(button == GLUT_RIGHT_BUTTON) // Right Mouse button down
 		{
@@ -336,7 +404,7 @@ void screenShot()
 
 void setSimulationParameters()
 {
-	NumberOfBodies = 50;
+	NumberOfBodies = 16;
 
 	TotalRunTime = 10000.0;
 
@@ -367,21 +435,14 @@ void setSimulationParameters()
 
 void allocateMemory()
 {
-	BodyPositionX = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyPositionY = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyPositionZ = (float*)malloc(NumberOfBodies*sizeof(float));
-	
-	BodyVelocityX = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyVelocityY = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyVelocityZ = (float*)malloc(NumberOfBodies*sizeof(float));
-	
-	BodyForceX    = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyForceY    = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyForceZ    = (float*)malloc(NumberOfBodies*sizeof(float));
-	
-	BodyColorX    = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyColorY    = (float*)malloc(NumberOfBodies*sizeof(float));
-	BodyColorZ    = (float*)malloc(NumberOfBodies*sizeof(float));
+// Allocate initial memory for the bodies array
+    Bodies = (Body*)malloc(Capacity*sizeof(Body));
+    if (Bodies == NULL) 
+    {
+        fprintf(stderr, "Initial memory allocation failed\n");
+        exit(1);
+    }
+    printf("Initial memory allocated with capacity: %d\n", Capacity);
 }
 
 void setInitailConditions()
@@ -398,9 +459,9 @@ void setInitailConditions()
 		{
 			// 2D Box Shape
 			// Get random number between -1 at 1.
-			BodyPositionX[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			BodyPositionY[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-			BodyPositionZ[i] = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0; //0.0;
+			Bodies[i].pos.x = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			Bodies[i].pos.y = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+			Bodies[i].pos.z = ((float)rand()/(float)RAND_MAX)*2.0 - 1.0; //0.0;
 			// Heart Shape
 			// float temp = 2*PI*((float)rand()/(float)RAND_MAX);
 			// BodyPositionX[i] = 16*pow(sin(temp),3)/7.0;
@@ -410,9 +471,9 @@ void setInitailConditions()
 			
 			for(int j = 0; j < i; j++)
 			{
-				dx = BodyPositionX[i] - BodyPositionX[j];
-				dy = BodyPositionY[i] - BodyPositionY[j];
-				dz = BodyPositionZ[i] - BodyPositionZ[j];
+				dx = Bodies[i].pos.x - Bodies[j].pos.x;
+				dy = Bodies[i].pos.y - Bodies[j].pos.y;
+				dz = Bodies[i].pos.z - Bodies[j].pos.z;
 				d2  = dx*dx + dy*dy + dz*dz;
 				d = sqrt(d2);
 				if(d < DiameterOfBody)
@@ -424,13 +485,13 @@ void setInitailConditions()
 			
 			if(test == 1)
 			{
-				BodyVelocityX[i] = 0.0; //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-				BodyVelocityY[i] = 0.0; //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
-				BodyVelocityZ[i] = 0.0;  //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+				Bodies[i].vel.x = 0.0; //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+				Bodies[i].vel.y = 0.0; //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
+				Bodies[i].vel.z = 0.0;  //VelocityMax*((float)rand()/(float)RAND_MAX)*2.0 - 1.0;
 				
-				BodyColorX[i] = ((float)rand()/(float)RAND_MAX);
-				BodyColorY[i] = ((float)rand()/(float)RAND_MAX);
-				BodyColorZ[i] = ((float)rand()/(float)RAND_MAX);
+				Bodies[i].color.x = ((float)rand()/(float)RAND_MAX);
+				Bodies[i].color.y = ((float)rand()/(float)RAND_MAX);
+				Bodies[i].color.z = ((float)rand()/(float)RAND_MAX);
 			}
 		}
 	}
@@ -448,9 +509,9 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    	centerOfMass.x += BodyPositionX[i]*MassOfBody;
-		centerOfMass.y += BodyPositionY[i]*MassOfBody;
-		centerOfMass.z += BodyPositionZ[i]*MassOfBody;
+    	centerOfMass.x += Bodies[i].pos.x*MassOfBody;
+		centerOfMass.y += Bodies[i].pos.y*MassOfBody;
+		centerOfMass.z += Bodies[i].pos.z*MassOfBody;
 		totalMass += MassOfBody;
 	}
 	centerOfMass.x /= totalMass;
@@ -472,9 +533,9 @@ float4 linearVelocity()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    	linearVelocity.x += BodyVelocityX[i]*MassOfBody;
-		linearVelocity.y += BodyVelocityY[i]*MassOfBody;
-		linearVelocity.z += BodyVelocityZ[i]*MassOfBody;
+    	linearVelocity.x += Bodies[i].vel.x*MassOfBody;
+		linearVelocity.y += Bodies[i].vel.y*MassOfBody;
+		linearVelocity.z += Bodies[i].vel.z*MassOfBody;
 		totalMass += MassOfBody;
 	}
 	linearVelocity.x /= totalMass;
@@ -492,13 +553,13 @@ void zeroOutSystem()
 		
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-		BodyPositionX[i] -= pos.x;
-		BodyPositionY[i] -= pos.y;
-		BodyPositionZ[i] -= pos.z;
+		Bodies[i].pos.x -= pos.x;
+		Bodies[i].pos.y -= pos.y;
+		Bodies[i].pos.z -= pos.z;
 		
-		BodyVelocityX[i] -= vel.x;
-		BodyVelocityY[i] -= vel.y;
-		BodyVelocityZ[i] -= vel.z;
+		Bodies[i].vel.x -= vel.x;
+		Bodies[i].vel.y -= vel.y;
+		Bodies[i].vel.z -= vel.z;
 	}
 }
 
@@ -515,9 +576,9 @@ void drawPicture()
 		// BodyColorX[i] = (float)rand()/(float)RAND_MAX;
 		// BodyColorY[i] = (float)rand()/(float)RAND_MAX;
 		// BodyColorZ[i] = (float)rand()/(float)RAND_MAX;
-		glColor3d(BodyColorX[i], BodyColorY[i], BodyColorZ[i]);
+		glColor3d(Bodies[i].color.x, Bodies[i].color.y, Bodies[i].color.z);
 		glPushMatrix();
-			glTranslatef(BodyPositionX[i], BodyPositionY[i], BodyPositionZ[i]);
+			glTranslatef(Bodies[i].pos.x, Bodies[i].pos.y, Bodies[i].pos.z);
 			glutSolidSphere(DiameterOfBody/2.0, 20, 20);
 		glPopMatrix();
 	}
@@ -530,16 +591,16 @@ void drawPicture()
 	}
 }
 
-void getForces(float *posX, float *posY,float *posZ, float *velX, float *velY, float *velZ, float *forceX, float *forceY, float *forceZ, float mass, float G, float H, float Epsilon, float drag, float dt, int n)
+void getForces(Body* bodies, float mass, float G, float H, float Epsilon, float drag, float dt, int n)
 {
 	float dx, dy, dz, d2, d;
 	float forceMag;
     
 	for(int i = 0; i < n; i++)
 	{
-		forceX[i] = 0.0;
-		forceY[i] = 0.0;
-		forceZ[i] = 0.0;
+		bodies[i].force.x = 0.0;
+		bodies[i].force.y = 0.0;
+		bodies[i].force.z = 0.0;
 	}
 	
 	// Getting force
@@ -547,32 +608,33 @@ void getForces(float *posX, float *posY,float *posZ, float *velX, float *velY, f
 	{   
 		for(int j = i + 1; j < n; j++)
 		{
-			dx = posX[j] - posX[i];
-			dy = posY[j] - posY[i];
-			dz = posZ[j] - posZ[i];
+			dx = bodies[j].pos.x - bodies[i].pos.x;
+			dy = bodies[j].pos.y - bodies[i].pos.y;
+			dz = bodies[j].pos.z - bodies[i].pos.z;
 		 	d2 = dx*dx + dy*dy + dz*dz + Epsilon;
 		 	d = sqrt(d2);
 			forceMag  = (G*mass*mass)/(d2) - (H*mass*mass)/(d2*d2);
-			forceX[i] += forceMag*dx/d;
-			forceY[i] += forceMag*dy/d;
-			forceZ[i] += forceMag*dz/d;
-			forceX[j] -= forceMag*dx/d;
-			forceY[j] -= forceMag*dy/d;
-			forceZ[j] -= forceMag*dz/d;
+			bodies[i].force.x += forceMag*dx/d;
+			bodies[i].force.y += forceMag*dy/d;
+			bodies[i].force.z += forceMag*dz/d;
+			bodies[j].force.x -= forceMag*dx/d;
+			bodies[j].force.y -= forceMag*dy/d;
+			bodies[j].force.z -= forceMag*dz/d;
 		}
-    	}
+    }
     
     	// Updating positions
 	for(int i = 0; i < n; i++)
 	{
-		velX[i] += ((forceX[i] - drag*velX[i])/mass)*dt;
-		velY[i] += ((forceY[i] - drag*velY[i])/mass)*dt;
-		velZ[i] += ((forceZ[i] - drag*velZ[i])/mass)*dt;
+		bodies[i].vel.x += ((bodies[i].force.x - drag*bodies[i].vel.x)/mass)*dt;
+		bodies[i].vel.y += ((bodies[i].force.y - drag*bodies[i].vel.y)/mass)*dt;
+		bodies[i].vel.z += ((bodies[i].force.z - drag*bodies[i].vel.z)/mass)*dt;
 		
-		posX[i] += velX[i]*dt;
-		posY[i] += velY[i]*dt;
-		posZ[i] += velZ[i]*dt;
+		bodies[i].pos.x += bodies[i].vel.x*dt;
+		bodies[i].pos.y += bodies[i].vel.y*dt;
+		bodies[i].pos.z += bodies[i].vel.z*dt;
 	}
+	// Force changes over time
 	G *= (1 - dForce);
 	H *= (1 - dForce);
 }
@@ -581,7 +643,7 @@ void nBody()
 {
 	if(Pause != 1)
 	{	
-		getForces(BodyPositionX, BodyPositionY, BodyPositionZ, BodyVelocityX, BodyVelocityY, BodyVelocityZ, BodyForceX, BodyForceY, BodyForceZ, MassOfBody,  G,  H,  Epsilon,  Drag, Dt, NumberOfBodies);
+		getForces(Bodies, MassOfBody,  G,  H,  Epsilon,  Drag, Dt, NumberOfBodies);
         
         	DrawTimer++;
 		if(DrawTimer == DrawRate) 
