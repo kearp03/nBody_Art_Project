@@ -158,7 +158,7 @@ void KeyPressed(unsigned char key, int x, int y)
             fprintf(stderr, "Warning: Attempted to close a NULL file pointer\n");
         }
 		glutDestroyWindow(Window);
-		printf("\nw Good Bye\n");
+		printf("\nGood Bye\n");
 		exit(0);
 	}
 	if(key == 'o')
@@ -516,10 +516,10 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    	centerOfMass.x += Bodies[i].pos.x*MassOfBody;
-		centerOfMass.y += Bodies[i].pos.y*MassOfBody;
-		centerOfMass.z += Bodies[i].pos.z*MassOfBody;
-		totalMass += MassOfBody;
+    	centerOfMass.x += Bodies[i].pos.x*Bodies[i].mass;
+		centerOfMass.y += Bodies[i].pos.y*Bodies[i].mass;
+		centerOfMass.z += Bodies[i].pos.z*Bodies[i].mass;
+		totalMass += Bodies[i].mass;
 	}
 	centerOfMass.x /= totalMass;
 	centerOfMass.y /= totalMass;
@@ -540,10 +540,10 @@ float4 linearVelocity()
 	
 	for(int i = 0; i < NumberOfBodies; i++)
 	{
-    	linearVelocity.x += Bodies[i].vel.x*MassOfBody;
-		linearVelocity.y += Bodies[i].vel.y*MassOfBody;
-		linearVelocity.z += Bodies[i].vel.z*MassOfBody;
-		totalMass += MassOfBody;
+    	linearVelocity.x += Bodies[i].vel.x*Bodies[i].mass;
+		linearVelocity.y += Bodies[i].vel.y*Bodies[i].mass;
+		linearVelocity.z += Bodies[i].vel.z*Bodies[i].mass;
+		totalMass += Bodies[i].mass;
 	}
 	linearVelocity.x /= totalMass;
 	linearVelocity.y /= totalMass;
@@ -598,7 +598,7 @@ void drawPicture()
 	}
 }
 
-void getForces(Body* bodies, float mass, float G, float H, float Epsilon, float drag, float dt, int n)
+void getForces(Body* bodies, float G, float H, float Epsilon, float drag, float dt, int n)
 {
 	float dx, dy, dz, d2, d;
 	float forceMag;
@@ -620,7 +620,7 @@ void getForces(Body* bodies, float mass, float G, float H, float Epsilon, float 
 			dz = bodies[j].pos.z - bodies[i].pos.z;
 		 	d2 = dx*dx + dy*dy + dz*dz + Epsilon;
 		 	d = sqrt(d2);
-			forceMag  = (G*mass*mass)/(d2) - (H*mass*mass)/(d2*d2);
+			forceMag  = (G*bodies[i].mass*bodies[j].mass)/(d2) - (H*bodies[i].mass*bodies[j].mass)/(d2*d2);
 			bodies[i].force.x += forceMag*dx/d;
 			bodies[i].force.y += forceMag*dy/d;
 			bodies[i].force.z += forceMag*dz/d;
@@ -633,9 +633,9 @@ void getForces(Body* bodies, float mass, float G, float H, float Epsilon, float 
     	// Updating positions
 	for(int i = 0; i < n; i++)
 	{
-		bodies[i].vel.x += ((bodies[i].force.x - drag*bodies[i].vel.x)/mass)*dt;
-		bodies[i].vel.y += ((bodies[i].force.y - drag*bodies[i].vel.y)/mass)*dt;
-		bodies[i].vel.z += ((bodies[i].force.z - drag*bodies[i].vel.z)/mass)*dt;
+		bodies[i].vel.x += ((bodies[i].force.x - drag*bodies[i].vel.x)/bodies[i].mass)*dt;
+		bodies[i].vel.y += ((bodies[i].force.y - drag*bodies[i].vel.y)/bodies[i].mass)*dt;
+		bodies[i].vel.z += ((bodies[i].force.z - drag*bodies[i].vel.z)/bodies[i].mass)*dt;
 		
 		bodies[i].pos.x += bodies[i].vel.x*dt;
 		bodies[i].pos.y += bodies[i].vel.y*dt;
@@ -650,7 +650,7 @@ void nBody()
 {
 	if(Pause != 1)
 	{	
-		getForces(Bodies, MassOfBody,  G,  H,  Epsilon,  Drag, Dt, NumberOfBodies);
+		getForces(Bodies,  G,  H,  Epsilon,  Drag, Dt, NumberOfBodies);
         
         	DrawTimer++;
 		if(DrawTimer == DrawRate) 
