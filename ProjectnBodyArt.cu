@@ -260,11 +260,20 @@ void mymouse(int button, int state, int x, int y)
 
                 //assign all the properties of the new body
                 newBody.id = index;
-				newBody.mass = mass;
-                newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
-                newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
-                newBody.vel = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+				if(index == 0)
+				{
+					newBody.mass = 50.0;
+					newBody.pos = {0.0, 0.0, 0.0, 0.0}; // Directly assign values to float4
+					newBody.vel = {0.0, 0.0, 0.0, 0.0}; // Directly assign values to float4
+				}
+				else
+				{
+					newBody.mass = mass;
+					newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
+					newBody.vel = {5.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+				}
                 newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+				newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
 
                 addBody(newBody);
 			}
@@ -419,9 +428,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 2.53;
+	G = 0.5;
 
-	H = 1.5;
+	H = 0.01;
 
 	dForce = 0.9;
 
