@@ -146,6 +146,28 @@ void reshape(int w, int h)
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 }
 
+// void reshape(int w, int h)
+// {
+//     glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+//     glMatrixMode(GL_PROJECTION);
+//     glLoadIdentity();
+
+//     // Calculate aspect ratio
+//     float aspect = (float)w / (float)h;
+
+//     // Adjust the projection matrix based on the aspect ratio
+//     if (aspect >= 1.0f) {
+//         // Wider than tall
+//         glOrtho(-aspect, aspect, -1.0, 1.0, Near, Far);
+//     } else {
+//         // Taller than wide
+//         glOrtho(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect, Near, Far);
+//     }
+
+//     glMatrixMode(GL_MODELVIEW);
+//     glLoadIdentity();
+// }
+
 void KeyPressed(unsigned char key, int x, int y)
 {	
 	if(key == 'q')
@@ -346,7 +368,9 @@ void movieOn()
 	/*const char* cmd = "ffmpeg -loglevel quiet -r 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
 		      "-threads 0 -preset fast -y -pix_fmt yuv420p -crf 21 -vf vflip output.mp4";*/
 
-	string baseCommand = "ffmpeg -loglevel quiet -r 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
+	// string baseCommand = "ffmpeg -loglevel quiet -r 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
+	// 			"-c:v libx264rgb -threads 0 -preset fast -y -pix_fmt yuv420p -crf 0 -vf vflip ";
+	string baseCommand = "ffmpeg -loglevel quiet -r 60 -f rawvideo -pix_fmt rgba -s " + to_string(XWindowSize) + "x" + to_string(YWindowSize) + " -i - "
 				"-c:v libx264rgb -threads 0 -preset fast -y -pix_fmt yuv420p -crf 0 -vf vflip ";
 
 	string z = baseCommand + ts;
@@ -374,10 +398,13 @@ void screenShot()
 	FILE* ScreenShotFile;
 	int* buffer;
 
-	const char* cmd = "ffmpeg -loglevel quiet -framerate 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
+	string tempString = "ffmpeg -loglevel quiet -framerate 60 -f rawvideo -pix_fmt rgba -s " + to_string(XWindowSize) + "x" + to_string(YWindowSize) + " -i - "
 				"-c:v libx264rgb -threads 0 -preset fast -y -crf 0 -vf vflip output1.mp4";
+	// const char* cmd = "ffmpeg -loglevel quiet -framerate 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
+	// 			"-c:v libx264rgb -threads 0 -preset fast -y -crf 0 -vf vflip output1.mp4";
 	//const char* cmd = "ffmpeg -r 60 -f rawvideo -pix_fmt rgba -s 1000x1000 -i - "
 	//              "-threads 0 -preset fast -y -pix_fmt yuv420p -crf 21 -vf vflip output1.mp4";
+	const char* cmd = tempString.c_str();
 	ScreenShotFile = popen(cmd, "w");
 	buffer = (int*)malloc(XWindowSize*YWindowSize*sizeof(int));
 	
@@ -790,8 +817,8 @@ int main(int argc, char** argv)
 {
 	setup();
 	
-	XWindowSize = 1000;
-	YWindowSize = 1000; 
+	XWindowSize = 2000;
+	YWindowSize = 2000; 
 	//Buffer = new int[XWindowSize*YWindowSize];
 
 	// Clip plains
