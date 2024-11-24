@@ -459,7 +459,7 @@ void setSimulationParameters()
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
 	G = 0.5;
 
-	H = 0.01;
+	H = 0.05;
 
 	dForce = 0.9;
 
