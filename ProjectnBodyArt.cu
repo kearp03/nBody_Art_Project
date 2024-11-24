@@ -817,8 +817,8 @@ int main(int argc, char** argv)
 {
 	setup();
 	
-	XWindowSize = 2000;
-	YWindowSize = 2000; 
+	XWindowSize = 1000;
+	YWindowSize = 1000; 
 	//Buffer = new int[XWindowSize*YWindowSize];
 
 	// Clip plains
