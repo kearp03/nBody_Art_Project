@@ -287,15 +287,17 @@ void mymouse(int button, int state, int x, int y)
 					newBody.mass = 50.0;
 					newBody.pos = {0.0, 0.0, 0.0, 0.0}; // Directly assign values to float4
 					newBody.vel = {0.0, 0.0, 0.0, 0.0}; // Directly assign values to float4
+					newBody.color = {1.0, 1.0, 1.0, 1.0f}; // Directly assign values to float4
 				}
 				else
 				{
 					newBody.mass = mass;
 					newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
-					newBody.vel = {5.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+					newBody.vel = {6.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
+					newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
+
 				}
                 newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
-				newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
 
                 addBody(newBody);
 			}
@@ -465,7 +467,7 @@ void setSimulationParameters()
 
 	MassOfBody = 1.0;
 
-	DiameterOfBody = 0.2;
+	DiameterOfBody = 0.1;
 
 	VelocityMax = 0.0;
 
@@ -666,7 +668,7 @@ void getForces(Body* bodies, float G, float H, float Epsilon, float drag, float 
 		}
     }
     
-    	// Updating positions
+    // Updating positions
 	for(int i = 0; i < n; i++)
 	{
 		bodies[i].vel.x += ((bodies[i].force.x - drag*bodies[i].vel.x)/bodies[i].mass)*dt;
@@ -678,8 +680,19 @@ void getForces(Body* bodies, float G, float H, float Epsilon, float drag, float 
 		bodies[i].pos.z += bodies[i].vel.z*dt;
 	}
 	// Force changes over time
-	G *= (1 - dForce);
-	H *= (1 - dForce);
+	// G *= (1 - dForce);
+	// H *= (1 - dForce);
+
+	// Move the system so that the first body is at the origin with no velocity
+	for(int i = 0; i < n; i++)
+	{
+		bodies[i].pos.x -= bodies[0].pos.x;
+		bodies[i].pos.y -= bodies[0].pos.y;
+		bodies[i].pos.z -= bodies[0].pos.z;
+		bodies[i].vel.x -= bodies[0].vel.x;
+		bodies[i].vel.y -= bodies[0].vel.y;
+		bodies[i].vel.z -= bodies[0].vel.z;
+	}	
 }
 
 void nBody()
@@ -688,7 +701,7 @@ void nBody()
 	{	
 		getForces(Bodies,  G,  H,  Epsilon,  Drag, Dt, NumberOfBodies);
         
-        	DrawTimer++;
+        DrawTimer++;
 		if(DrawTimer == DrawRate) 
 		{
 			drawPicture();
