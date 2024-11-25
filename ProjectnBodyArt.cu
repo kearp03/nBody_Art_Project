@@ -519,7 +519,7 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.6;
+	G = 0.3;
 
 	H = 0.03;
 
