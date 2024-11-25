@@ -59,7 +59,9 @@ int MovieOn;
 int MovieFlag;
 int Trace;
 double MouseX, MouseY, MouseZ;
-float4 NextColor;
+float4 NextColor = {0.0f,0.0f,0.0f,1.0f};
+string NextColorString = "Random";
+int RandomColor = 1;
 
 // Window globals
 static int Window;
@@ -205,14 +207,12 @@ void KeyPressed(unsigned char key, int x, int y)
 		if(Pause == 1) Pause = 0;
 		else Pause = 1;
 		drawPicture();
-		terminalPrint();
 	}
 	if(key == 't') // Turns tracers on and off
 	{
 		if(Trace == 1) Trace = 0;
 		else Trace = 1;
 		drawPicture();
-		terminalPrint();
 	}
 	if(key == 'M')  // Movie on/off
 	{
@@ -226,13 +226,11 @@ void KeyPressed(unsigned char key, int x, int y)
 			MovieFlag = 0;
 			movieOff();
 		}
-		terminalPrint();
 	}
 	
 	if(key == 'S')  // Screenshot
 	{	
 		screenShot();
-		terminalPrint();
 	}
 
 	if(key == 'C') // Center out system
@@ -245,53 +243,68 @@ void KeyPressed(unsigned char key, int x, int y)
 	{
 		if(LClickOn == 1) LClickOn = 0;
 		else LClickOn = 1;
-		terminalPrint();
 	}
 
 	if(key== '0')
 	{
-		float colorx = ((float)rand()/(float)RAND_MAX);
-        float colory = ((float)rand()/(float)RAND_MAX);
-        float colorz = ((float)rand()/(float)RAND_MAX);
-
-		NextColor={colorx,colory,colorz,1.0f};
+		RandomColor = 1;
+		NextColorString = "Random";
 	}
 	if(key== '1')
 	{
+		RandomColor = 0;
 		NextColor={1.0f,0.4f,0.5f,1.0f};
+		NextColorString = "Pink";
 	}
 	if(key== '2')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,1.0f,0.2f,1.0f};
+		NextColorString = "Yellow";
 	}
 	if(key== '3')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,0.07f,0.07f,1.0f};
+		NextColorString = "Red";
 	}
 	if(key== '4')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,0.45f,0.07f,1.0f};
+		NextColorString = "Orange";
 	}
 	if(key== '5')
 	{
+		RandomColor = 0;
 		NextColor={0.5f,0.92,0.4f,1.0f};
+		NextColorString = "Green";
 	}
 	if(key== '6')
 	{
+		RandomColor = 0;
 		NextColor={0.4f,0.69f,0.92f,1.0f};
+		NextColorString = "Blue";
 	}
 	if(key== '7')
 	{
+		RandomColor = 0;
 		NextColor={0.4f,0.4f,0.92f,1.0f};
+		NextColorString = "Purple";
 	}
 	if(key== '8')
 	{
+		RandomColor = 0;
 		NextColor={1.0f,1.0f,1.0f,1.0f};
+		NextColorString = "White";
 	}
 	if(key== '9')
 	{
+		RandomColor = 0;
 		NextColor={0.0f,0.0f,0.0f,1.0f};
+		NextColorString = "Black";
 	}
+	terminalPrint();
 }
 
 void mousePassiveMotionCallback(int x, int y) 
@@ -339,8 +352,11 @@ void mymouse(int button, int state, int x, int y)
 				{
 					newBody.mass = mass;
 					newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
-					newBody.vel = {6.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
-					newBody.color = NextColor; // Directly assign values to float4
+					newBody.vel = {4*ypos, -4*xpos, 0.0f, 0.0f}; // Directly assign values to float4
+					if(RandomColor != 1)
+						newBody.color = NextColor; // Directly assign values to float4
+					else
+						newBody.color = {(float)rand()/(float)RAND_MAX, (float)rand()/(float)RAND_MAX, (float)rand()/(float)RAND_MAX, 1.0f}; // Directly assign values to float4
 
 				}
                 newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
@@ -503,9 +519,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 1.0;
+	G = 0.6;
 
-	H = 0.05;
+	H = 0.03;
 
 	dForce = 0.9;
 
@@ -865,6 +881,7 @@ void terminalPrint()
 	printf("\n 7: Purple");
 	printf("\n 8: White");
 	printf("\n 9: Black");
+	printf("\n Next Color: %s", NextColorString.c_str());
 	printf("\n");
 }
 
