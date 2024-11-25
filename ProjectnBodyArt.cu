@@ -304,6 +304,11 @@ void KeyPressed(unsigned char key, int x, int y)
 		NextColor={0.0f,0.0f,0.0f,1.0f};
 		NextColorString = "Black";
 	}
+	if(key=='B'){
+		NumberOfBodies--;
+		drawPicture();
+	}
+
 	terminalPrint();
 }
 
@@ -519,9 +524,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.3;
+	G = 0.6;
 
-	H = 0.1;
+	H = 0.03;
 
 	dForce = 0.9;
 
@@ -882,6 +887,10 @@ void terminalPrint()
 	printf("\n 8: White");
 	printf("\n 9: Black");
 	printf("\n Next Color: %s", NextColorString.c_str());
+	
+	printf("\n");
+	printf("\n B: Remove Last Body");
+	
 	printf("\n");
 }
 
@@ -971,9 +980,3 @@ int main(int argc, char** argv)
 	glutMainLoop();
 	return 0;
 }
-
-
-
-
-
-
