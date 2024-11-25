@@ -252,46 +252,55 @@ void KeyPressed(unsigned char key, int x, int y)
 	}
 	if(key== '1')
 	{
+		RandomColor = 0;
 		NextColor={1.0f,0.4f,0.5f,1.0f};
 		NextColorString = "Pink";
 	}
 	if(key== '2')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,1.0f,0.2f,1.0f};
 		NextColorString = "Yellow";
 	}
 	if(key== '3')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,0.07f,0.07f,1.0f};
 		NextColorString = "Red";
 	}
 	if(key== '4')
 	{
+		RandomColor = 0;
 		NextColor={0.9f,0.45f,0.07f,1.0f};
 		NextColorString = "Orange";
 	}
 	if(key== '5')
 	{
+		RandomColor = 0;
 		NextColor={0.5f,0.92,0.4f,1.0f};
 		NextColorString = "Green";
 	}
 	if(key== '6')
 	{
+		RandomColor = 0;
 		NextColor={0.4f,0.69f,0.92f,1.0f};
 		NextColorString = "Blue";
 	}
 	if(key== '7')
 	{
+		RandomColor = 0;
 		NextColor={0.4f,0.4f,0.92f,1.0f};
 		NextColorString = "Purple";
 	}
 	if(key== '8')
 	{
+		RandomColor = 0;
 		NextColor={1.0f,1.0f,1.0f,1.0f};
 		NextColorString = "White";
 	}
 	if(key== '9')
 	{
+		RandomColor = 0;
 		NextColor={0.0f,0.0f,0.0f,1.0f};
 		NextColorString = "Black";
 	}
