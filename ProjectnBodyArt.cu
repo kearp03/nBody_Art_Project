@@ -59,6 +59,7 @@ int MovieOn;
 int MovieFlag;
 int Trace;
 double MouseX, MouseY, MouseZ;
+float4 NextColor;
 
 // Window globals
 static int Window;
@@ -246,6 +247,51 @@ void KeyPressed(unsigned char key, int x, int y)
 		else LClickOn = 1;
 		terminalPrint();
 	}
+
+	if(key== '0')
+	{
+		float colorx = ((float)rand()/(float)RAND_MAX);
+        float colory = ((float)rand()/(float)RAND_MAX);
+        float colorz = ((float)rand()/(float)RAND_MAX);
+
+		NextColor={colorx,colory,colorz,1.0f};
+	}
+	if(key== '1')
+	{
+		NextColor={1.0f,0.4f,0.5f,1.0f};
+	}
+	if(key== '2')
+	{
+		NextColor={0.9f,1.0f,0.2f,1.0f};
+	}
+	if(key== '3')
+	{
+		NextColor={0.9f,0.07f,0.07f,1.0f};
+	}
+	if(key== '4')
+	{
+		NextColor={0.9f,0.45f,0.07f,1.0f};
+	}
+	if(key== '5')
+	{
+		NextColor={0.5f,0.92,0.4f,1.0f};
+	}
+	if(key== '6')
+	{
+		NextColor={0.4f,0.69f,0.92f,1.0f};
+	}
+	if(key== '7')
+	{
+		NextColor={0.4f,0.4f,0.92f,1.0f};
+	}
+	if(key== '8')
+	{
+		NextColor={1.0f,1.0f,1.0f,1.0f};
+	}
+	if(key== '9')
+	{
+		NextColor={0.0f,0.0f,0.0f,1.0f};
+	}
 }
 
 void mousePassiveMotionCallback(int x, int y) 
@@ -294,7 +340,7 @@ void mymouse(int button, int state, int x, int y)
 					newBody.mass = mass;
 					newBody.pos = {xpos, ypos, 0.0f, 0.0f}; // Directly assign values to float4
 					newBody.vel = {6.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
-					newBody.color = {colorx, colory, colorz, 1.0f}; // Directly assign values to float4
+					newBody.color = NextColor; // Directly assign values to float4
 
 				}
                 newBody.force = {0.0f, 0.0f, 0.0f, 0.0f}; // Directly assign values to float4
@@ -457,9 +503,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.5;
+	G = 1.0;
 
-	H = 0.01;
+	H = 0.05;
 
 	dForce = 0.9;
 
@@ -807,7 +853,18 @@ void terminalPrint()
 	
 	printf("\n");
 	printf("\n q: Terminates the simulation");
-	
+
+	printf("\n");
+	printf("\n 0: Random");
+	printf("\n 1: Pink!!");
+	printf("\n 2: Yellow");
+	printf("\n 3: Red");
+	printf("\n 4: Orange");
+	printf("\n 5: Green");
+	printf("\n 6: Blue");
+	printf("\n 7: Purple");
+	printf("\n 8: White");
+	printf("\n 9: Black");
 	printf("\n");
 }
 
