@@ -308,6 +308,10 @@ void KeyPressed(unsigned char key, int x, int y)
 		NumberOfBodies--;
 		drawPicture();
 	}
+	if(key=='R'){
+		NumberOfBodies = 0;
+		drawPicture();
+	}
 
 	terminalPrint();
 }
@@ -891,6 +895,8 @@ void terminalPrint()
 	printf("\n");
 	printf("\n B: Remove Last Body");
 	
+	printf("\n");
+	printf("\n R: Remove All Bodies");
 	printf("\n");
 }
 
