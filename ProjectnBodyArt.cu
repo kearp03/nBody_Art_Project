@@ -62,6 +62,8 @@ double MouseX, MouseY, MouseZ;
 float4 NextColor = {0.0f,0.0f,0.0f,1.0f};
 string NextColorString = "Random";
 int RandomColor = 1;
+int GToggle = 0;
+int HToggle = 0;
 
 // Window globals
 static int Window;
@@ -313,6 +315,31 @@ void KeyPressed(unsigned char key, int x, int y)
 		drawPicture();
 	}
 
+	if(key=='G'){
+		if(GToggle == 0) 
+		{
+			GToggle = 1;
+			HToggle = 0;
+		}
+		else GToggle = 0;
+	}
+	if(key=='H'){
+		if(HToggle == 0)
+		{
+			HToggle = 1;
+			GToggle = 0;
+		}
+		else HToggle = 0;
+	}
+	if(key=='['){
+		if(GToggle == 1) G -= 0.1;
+		if(HToggle == 1) H -= 0.01;
+	}
+	if(key==']'){
+		if(GToggle == 1) G += 0.1;
+		if(HToggle == 1) H += 0.01;
+	}
+
 	terminalPrint();
 }
 
@@ -528,9 +555,9 @@ void setSimulationParameters()
 
 	// This is a lennard-Jones type force G*m1*m2/(r^2) - H*m1*m2/(r^4).
 	// If you want a gravity type force just set G to your gravity and set H equal 0.
-	G = 0.6;
+	G = 0.4;
 
-	H = 0.03;
+	H = 0.02;
 
 	dForce = 0.9;
 
@@ -821,6 +848,31 @@ void terminalPrint()
 	printf(" o/f: Orthographic/Frustum Projection");
 	printf("\n");
 	printf("\n Mouse Wheel: Zoom in/out\n");
+	printf("\n [] : Increase/Decrease G or H\n");
+	printf("\n G: Edit G toggle --> ");
+	printf(" G ");
+	if (GToggle == 1) 
+	{
+		printf("\e[1m" " \033[0;32mCan be edited\n" "\e[m");
+	}
+	else 
+	{
+		printf("\e[1m" " \033[0;31mCannot be edited\n" "\e[m");
+	}
+	printf("\n G: %f", G);
+	printf("\n");
+	printf("\n H: Edit H toggle --> ");
+	printf(" H ");
+	if (HToggle == 1) 
+	{
+		printf("\e[1m" " \033[0;32mCan be edited\n" "\e[m");
+	}
+	else 
+	{
+		printf("\e[1m" " \033[0;31mCannot be edited\n" "\e[m");
+	}
+	printf("\n H: %f", H);
+	printf("\n");
 	printf("\n p: Pause on/off toggle --> ");
 	printf(" The simulation is:");
 	if (Pause == 1) 
