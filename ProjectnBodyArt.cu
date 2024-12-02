@@ -314,6 +314,7 @@ void KeyPressed(unsigned char key, int x, int y)
 		NumberOfBodies = 0;
 		drawPicture();
 	}
+
 	if(key=='G'){
 		if(GToggle == 0) 
 		{
