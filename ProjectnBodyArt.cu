@@ -332,8 +332,8 @@ void KeyPressed(unsigned char key, int x, int y)
 		else HToggle = 0;
 	}
 	if(key=='['){
-		if(GToggle == 1) G -= 0.1;
-		if(HToggle == 1) H -= 0.01;
+		if(GToggle == 1 && G > 0.1) G -= 0.1;
+		if(HToggle == 1 && H > 0.0) H -= 0.01;
 	}
 	if(key==']'){
 		if(GToggle == 1) G += 0.1;
